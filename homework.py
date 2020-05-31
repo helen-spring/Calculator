@@ -34,23 +34,23 @@ class CashCalculator(Calculator):
     EURO_RATE = 78.30
 
     def get_today_cash_remained(self, currency):
-        if self.get_today_remained() != 0:
-            currency_list = {
-                'rub': ('руб', 1),
-                'usd': ('USD', self.USD_RATE),
-                'eur': ('Euro', self.EURO_RATE)
-             }
-            # Подсчёт оставшихся на сегодня денег в валюте.
-            spent_sum = self.get_today_stats()
-            currency_name, currency_rate = currency_list.get(currency)
-            remain_sum = abs(self.get_today_remained() / currency_rate)
-            if currency in currency_list:
-                if spent_sum > self.limit:
-                    return (f'Денег нет, держись: твой долг - '
-                            f'{remain_sum:.2f} {currency_name}')
-                return f'На сегодня осталось {remain_sum:.2f} {currency_name}'
+        remained = self.get_today_remained()
+        if remained == 0:
+            return 'Денег нет, держись'
+        currency_list = {
+            'rub': ('руб', 1),
+            'usd': ('USD', self.USD_RATE),
+            'eur': ('Euro', self.EURO_RATE)
+        }
+        if currency not in currency_list:
             raise ValueError('Допустимые значения: rub, usd, eur')
-        return 'Денег нет, держись'
+        # Подсчёт оставшихся на сегодня денег в валюте.
+        currency_name, currency_rate = currency_list.get(currency)
+        remain_sum = abs(remained / currency_rate)
+        if remained < 0:
+            return (f'Денег нет, держись: твой долг - '
+                    f'{remain_sum:.2f} {currency_name}')
+        return f'На сегодня осталось {remain_sum:.2f} {currency_name}'
 
 
 class CaloriesCalculator(Calculator):
@@ -71,5 +71,3 @@ class Record:
         else:
             self.date = dt.datetime.strptime(date, '%d.%m.%Y').date()
         self.comment = comment
-
-# согласна, стало гораздо круче))
