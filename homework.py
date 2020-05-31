@@ -55,15 +55,14 @@ class CashCalculator(Calculator):
 
 
 class CaloriesCalculator(Calculator):
-    @property
     def get_calories_remained(self):
         """Подсчёт оставшихся на сегодня калорий."""
         spent_sum = self.get_today_stats()
         remain_sum = self.get_today_remained()
         if spent_sum >= self.limit:
             return 'Хватит есть!'
-        return f'Сегодня можно съесть что-нибудь ещё, ' \
-               f'но с общей калорийностью не более {remain_sum} кКал'
+        return ('Сегодня можно съесть что-нибудь ещё, '
+               f'но с общей калорийностью не более {remain_sum} кКал')
 
 
 class Record:
