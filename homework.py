@@ -34,42 +34,42 @@ class CashCalculator(Calculator):
     EURO_RATE = 78.30
 
     def get_today_cash_remained(self, currency):
-        currency_list = {
-            'rub': ['руб', 1],
-            'usd': ['USD', self.USD_RATE],
-            'eur': ['Euro', self.EURO_RATE]
-        }
-        """Подсчёт оставшихся на сегодня денег в валюте."""
-        spent_sum = self.get_today_stats()
-        currency_name, currency_rate = currency_list.get(currency)
-        remain_sum = abs(self.get_today_remained() / currency_rate)
-        if currency in currency_list:
-            if spent_sum > self.limit:
-                return f'Денег нет, держись: твой долг - {remain_sum:.2f} {currency_name}'
-            elif spent_sum == self.limit:
-                return 'Денег нет, держись'
-            else:
+        if self.get_today_remained() != 0:
+            currency_list = {
+                'rub': ('руб', 1),
+                'usd': ('USD', self.USD_RATE),
+                'eur': ('Euro', self.EURO_RATE)
+             }
+            # Подсчёт оставшихся на сегодня денег в валюте.
+            spent_sum = self.get_today_stats()
+            currency_name, currency_rate = currency_list.get(currency)
+            remain_sum = abs(self.get_today_remained() / currency_rate)
+            if currency in currency_list:
+                if spent_sum > self.limit:
+                    return (f'Денег нет, держись: твой долг - '
+                            f'{remain_sum:.2f} {currency_name}')
                 return f'На сегодня осталось {remain_sum:.2f} {currency_name}'
-        else:
-            raise Exception('Валюта не входит в список допустимых')
+            raise ValueError('Допустимые значения: rub, usd, eur')
+        return 'Денег нет, держись'
 
 
 class CaloriesCalculator(Calculator):
     def get_calories_remained(self):
         """Подсчёт оставшихся на сегодня калорий."""
-        spent_sum = self.get_today_stats()
         remain_sum = self.get_today_remained()
-        if spent_sum >= self.limit:
+        if remain_sum <= 0:
             return 'Хватит есть!'
         return ('Сегодня можно съесть что-нибудь ещё, '
-               f'но с общей калорийностью не более {remain_sum} кКал')
+                f'но с общей калорийностью не более {remain_sum} кКал')
 
 
 class Record:
     def __init__(self, amount, comment, date=None):
-        self.amount = int(amount)
+        self.amount = amount
         if date is None:
             self.date = dt.date.today()
         else:
             self.date = dt.datetime.strptime(date, '%d.%m.%Y').date()
         self.comment = comment
+
+# согласна, стало гораздо круче))
